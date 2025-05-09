@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Doctor Availability Calendar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      max-width: 600px;
+      margin-bottom: 40px;
+    }
+    .day, .header {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    .header {
+      background-color: #f0f0f0;
+      font-weight: bold;
+    }
+    .available {
+      background-color: #b3e5fc;
+    }
+    .doctor-section {
+      margin-bottom: 60px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Doctor Availability Calendar</h1>
+  <div id="doctors"></div>
+
+  <script>
+    const doctors = {
+      x: ['2025-06-03', '2025-06-10', '2025-07-15', '2025-08-01'],
+      y: ['2025-06-05', '2025-07-20', '2025-09-10'],
+      z: ['2025-06-15', '2025-07-01', '2025-08-10', '2025-10-01']
+    };
+
+    const doctorNames = {
+      x: "Dr. X",
+      y: "Dr. Y",
+      z: "Dr. Z"
+    };
+
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    function generateCalendar(monthOffset, availableDates) {
+      const now = new Date();
+      const date = new Date(now.getFullYear(), now.getMonth() + monthOffset, 1);
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const firstDay = new Date(year, month, 1).getDay();
+
+      const container = document.createElement('div');
+      const title = document.createElement('h3');
+      title.textContent = `${monthNames[month]} ${year}`;
+      container.appendChild(title);
+
+      const calendar = document.createElement('div');
+      calendar.className = 'calendar';
+
+      ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
+        const cell = document.createElement('div');
+        cell.className = 'header';
+        cell.textContent = day;
+        calendar.appendChild(cell);
+      });
+
+      for (let i = 0; i < firstDay; i++) {
+        calendar.appendChild(document.createElement('div'));
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const cell = document.createElement('div');
+        cell.className = 'day';
+        const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+        if (availableDates.includes(dateString)) {
+          cell.classList.add('available');
+        }
+
+        cell.textContent = day;
+        calendar.appendChild(cell);
+      }
+
+      container.appendChild(calendar);
+      return container;
+    }
+
+    const doctorsDiv = document.getElementById('doctors');
+
+    Object.keys(doctors).forEach(docKey => {
+      const section = document.createElement('div');
+      section.className = 'doctor-section';
+
+      const docTitle = document.createElement('h2');
+      docTitle.textContent = doctorNames[docKey];
+      section.appendChild(docTitle);
+
+      for (let i = 0; i < 5; i++) {
+        section.appendChild(generateCalendar(i, doctors[docKey]));
+      }
+
+      doctorsDiv.appendChild(section);
+    });
+  </script>
+</body>
+</html>
+
+
+
